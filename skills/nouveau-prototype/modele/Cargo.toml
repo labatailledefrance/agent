@@ -1,0 +1,19 @@
+[package]
+name = "p<XX>-<nom-court>"
+version = "0.1.0"
+edition = "2024"
+
+# Versions vérifiées sur crates.io le <AAAA-MM-JJ>, choisies vieilles d'au moins
+# deux semaines. Versions exactes (=x.y.z) : le prototype doit se recompiler à
+# l'identique.
+[dependencies]
+clap = { version = "=4.6.7", features = ["derive"] }
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 16
+debug = false
+
+[profile.dev.package."*"]
+opt-level = 2
