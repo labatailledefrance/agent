@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Jeu vidéo open source de reconquête de la France face aux zombies, en 2030. Le projet est en phase de **conception** : le gros du travail est dans la documentation, pas dans le code.
+**La Bataille de France** : jeu vidéo open source de reconquête de la France face aux zombies, en 2030. Le projet est en phase de **conception** : le gros du travail est dans la documentation, pas dans le code.
 
 ## Langue
 
@@ -10,7 +10,7 @@ Jeu vidéo open source de reconquête de la France face aux zombies, en 2030. Le
 ## Organisation
 
 - `README.md` : carte locale des dépôts (hors dépôt).
-- `.claude/` : ce fichier, les skills et les agents de Claude Code (dépôt `fafapiti/agent`).
+- `.claude/` : ce fichier, les skills et les agents de Claude Code (dépôt `labatailledefrance/agent`).
 - `documentation/README.md` : vision du jeu (scénario, gameplay, exigences).
 - `documentation/OPEN-PROBLEMS.md` : problèmes techniques et de conception, avec identifiants (A-01, G-03…) et statuts (Ouvert, Piste, Prototype, Décidé).
 - `documentation/game-elements/` :
@@ -25,11 +25,11 @@ Jeu vidéo open source de reconquête de la France face aux zombies, en 2030. Le
 - `data/` : données brutes (`sources/`) et générées (`generated/`), non versionnées.
 - `assets/` : modèles 3D, textures, sons.
 
-La racine du projet n'est **pas** un dépôt git ; ne pas l'initialiser. Les sous-dossiers deviennent des dépôts au besoin : `documentation/` est [`fafapiti/documentation`](https://github.com/fafapiti/documentation), `prototypes/` est [`fafapiti/prototypes`](https://github.com/fafapiti/prototypes), `.claude/` est [`fafapiti/agent`](https://github.com/fafapiti/agent) (privés) ; `game/` le deviendra. Le `README.md` de la racine n'est dans aucun dépôt.
+La racine du projet n'est **pas** un dépôt git ; ne pas l'initialiser. Les sous-dossiers deviennent des dépôts au besoin : `documentation/` est [`labatailledefrance/documentation`](https://github.com/labatailledefrance/documentation), `prototypes/` est [`labatailledefrance/prototypes`](https://github.com/labatailledefrance/prototypes), `.claude/` est [`labatailledefrance/agent`](https://github.com/labatailledefrance/agent) (privés) ; `game/` le deviendra. Le `README.md` de la racine n'est dans aucun dépôt.
 
 ## GitHub
 
-- Organisation **`fafapiti`** (via `gh`). Les dépôts y sont créés **au besoin**.
+- Organisation **`labatailledefrance`** (via `gh`). Les dépôts y sont créés **au besoin**.
 - **Pas de signature de commit** : la configuration globale signe les commits (`commit.gpgsign = true`) ; chaque dépôt du projet la désactive localement (`git config commit.gpgsign false`).
 
 ## Conventions de documentation
@@ -38,7 +38,7 @@ La racine du projet n'est **pas** un dépôt git ; ne pas l'initialiser. Les sou
 - **Pas de chiffres** pour les statistiques de jeu : niveaux qualitatifs (faible / moyen / élevé). Les chiffres viendront plus tard.
 - **Ressources** : dans les fiches, utiliser exactement les noms de `RESOURCES.md`.
 - **Exactitude** : les informations sur l'arsenal réel dont on n'est pas sûr sont marquées « à vérifier ».
-- **Liens** : relatifs, entre fichiers `.md` d'un **même dépôt**. D'un dépôt à l'autre, URL GitHub complète (`https://github.com/fafapiti/<dépôt>/blob/main/<chemin>`). Pas de lien vers `data/` (non versionné) ni vers `CLAUDE.md` : chemin en texte. Après une modification de structure, vérifier qu'aucun lien n'est cassé (skill `verifier-liens`).
+- **Liens** : relatifs, entre fichiers `.md` d'un **même dépôt**. D'un dépôt à l'autre, URL GitHub complète (`https://github.com/labatailledefrance/<dépôt>/blob/main/<chemin>`). Pas de lien vers `data/` (non versionné) ni vers `CLAUDE.md` : chemin en texte. Après une modification de structure, vérifier qu'aucun lien n'est cassé (skill `verifier-liens`).
 
 ## Traitement des décisions
 
@@ -48,9 +48,10 @@ Quand on propose des questions à l'utilisateur, les donner dans ce même format
 
 ## Décisions structurantes (à respecter)
 
+- **Nom du jeu** : « La Bataille de France » ; domaine `labatailledefrance.fr`, organisation GitHub `labatailledefrance`.
 - Monde à l'échelle **1:1**, métropole et outre-mer seulement, **sans les TAAF, Clipperton ni le Pacifique** (Nouvelle-Calédonie, Polynésie française, Wallis-et-Futuna, hors des données de l'IGN) ; le reste du globe est affiché en gris. Les navires naviguent réellement sur toutes les mers (G-01).
 - **Temps réel**, sans accélération ; si le calcul ne suit plus, le temps ralentit sous ×1 pour tous (A-02).
-- **Multijoueur seulement** : une seule partie officielle, sur un serveur unique qui fait autorité (`srv.chelsea486mhz.fr`, pile native Kubernetes : ingress Traefik, qui filtre les abus ; tiles et client servis par nginx) ; monde persistant ; remise à zéro décidée par l'administrateur, et **toute mise à jour du serveur remet le monde à zéro** (pas de migration) ; instantané toutes les 5 min (A-12, A-13, H-01, H-07).
+- **Multijoueur seulement** : une seule partie officielle, sur un serveur unique qui fait autorité (`srv.labatailledefrance.fr`, pile native Kubernetes : ingress Traefik, qui filtre les abus ; tiles et client servis par nginx) ; monde persistant ; remise à zéro décidée par l'administrateur, et **toute mise à jour du serveur remet le monde à zéro** (pas de migration) ; instantané toutes les 5 min (A-12, A-13, H-01, H-07).
 - **Jeu en navigateur** : client Bevy en WebAssembly, **WebGPU seul** ; il affiche et envoie des ordres, il ne simule rien (F-01, F-04).
 - **Pas de compte** (pour le moment), anonymat total ; **tout le monde commande tout**, sans verrou, le dernier ordre l'emporte (« le joueur » = n'importe quel joueur) ; actions irréversibles (nucléaire, frappe sur un barrage, liste close) soumises au **vote des joueurs connectés** (majorité, une voix par adresse IP) (H-02 à H-04).
 - Objectif de **1 000 joueurs simultanés** sur 1 Gbit/s, sans CDN (H-05).
@@ -66,7 +67,7 @@ Quand on propose des questions à l'utilisateur, les donner dans ce même format
 - Jeu **100 % open source**, code en **Rust portable**. Licence à choisir plus tard.
 - Moteur **Bevy** : serveur sans rendu (simulation sur l'exécuteur multi-thread), client complet en WebAssembly. Données mises à jour ensemble groupées dans un même composant ; taille de lot minimale sur toute requête parallèle ; états fréquents en champs, marqueurs réservés aux changements rares (F-01, F-02).
 - **Pas de sandbox de sécurité** pour les mods : ce n'est pas un objectif. Les mods ne tournent que côté serveur (F-03).
-- Références (F-02) : **serveur** `srv.chelsea486mhz.fr` (EPYC 7351P, 16 cœurs / 32 threads, 128 Go, 2 × 8 To HDD en RAID 0, 1 Gbit/s, k3s + Traefik) pour le budget de simulation ; **client** et mesure des prototypes : Ryzen 7 5700X, 32 Go de DDR4, RTX 3060 12 Go.
+- Références (F-02) : **serveur** `srv.labatailledefrance.fr` (EPYC 7351P, 16 cœurs / 32 threads, 128 Go, 2 × 8 To HDD en RAID 0, 1 Gbit/s, k3s + Traefik) pour le budget de simulation ; **client** et mesure des prototypes : Ryzen 7 5700X, 32 Go de DDR4, RTX 3060 12 Go.
 
 ## Utilisateur
 

@@ -1,6 +1,6 @@
 # Agent
 
-Configuration de Claude Code pour le jeu de reconquête de la France face aux zombies : instructions du projet, skills et agents.
+Configuration de Claude Code pour La Bataille de France, jeu de reconquête de la France face aux zombies : instructions du projet, skills et agents.
 
 ## Installation
 
@@ -8,9 +8,9 @@ Ce dépôt se clone dans le dossier `.claude/` à la racine de l'espace de trava
 
 ```
 mkdir zombie && cd zombie
-git clone https://github.com/fafapiti/agent .claude
-git clone https://github.com/fafapiti/documentation
-git clone https://github.com/fafapiti/prototypes
+git clone https://github.com/labatailledefrance/agent .claude
+git clone https://github.com/labatailledefrance/documentation
+git clone https://github.com/labatailledefrance/prototypes
 for d in .claude documentation prototypes; do git -C $d config commit.gpgsign false; done
 ```
 

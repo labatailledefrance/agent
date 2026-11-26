@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Vérifie les liens des fichiers Markdown de l'espace de travail.
 
-Contrôle les liens relatifs et les URL https://github.com/fafapiti/<dépôt>/...
+Contrôle les liens relatifs et les URL https://github.com/labatailledefrance/<dépôt>/...
 (ramenées aux fichiers locaux du dépôt cloné), fichiers et ancres compris.
 Signale aussi les liens relatifs qui sortent de leur dépôt (ils sont cassés
 sur GitHub) et les liens vers data/ ou CLAUDE.md.
@@ -18,7 +18,7 @@ import urllib.parse
 
 RACINE = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else
                          os.path.join(os.path.dirname(__file__), '..', '..', '..'))
-ORG = 'https://github.com/fafapiti/'
+ORG = 'https://github.com/labatailledefrance/'
 # Dépôt GitHub -> dossier local
 DEPOTS = {'documentation': 'documentation', 'prototypes': 'prototypes',
           'game': 'game', 'agent': '.claude'}

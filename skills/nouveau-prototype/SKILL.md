@@ -29,4 +29,4 @@ Un prototype est **jetable** : il valide une hypothèse de `documentation/OPEN-P
 
 1. Remplir *Analyse*, *Conclusion* et *Recommandations* ; proposer les décisions à l'utilisateur au format en bloc (`P-XX / - Question ?: Réponse`).
 2. Après sa réponse, remplir *Décisions*, puis les reporter avec le skill `traiter-decisions` : un **Constat** et une **Décision** `(P-XX, [résultats](…))` dans chaque problème concerné d'`OPEN-PROBLEMS.md`, la ligne *Résultats* de la fiche dans `prototypes/README.md`, et `.claude/CLAUDE.md` si la décision est structurante.
-3. Liens vers la documentation : URL `https://github.com/fafapiti/documentation/blob/main/…`. Lancer `verifier-liens`.
+3. Liens vers la documentation : URL `https://github.com/labatailledefrance/documentation/blob/main/…`. Lancer `verifier-liens`.

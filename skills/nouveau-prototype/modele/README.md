@@ -1,6 +1,6 @@
 # P-<XX> — <Titre de la fiche>
 
-Prototype jetable. Problèmes : [<ID>](https://github.com/fafapiti/documentation/blob/main/OPEN-PROBLEMS.md#<ancre>). Fiche du prototype : [prototypes/README.md](../README.md#<ancre-de-la-fiche>).
+Prototype jetable. Problèmes : [<ID>](https://github.com/labatailledefrance/documentation/blob/main/OPEN-PROBLEMS.md#<ancre>). Fiche du prototype : [prototypes/README.md](../README.md#<ancre-de-la-fiche>).
 
 ## Hypothèse testée
 
