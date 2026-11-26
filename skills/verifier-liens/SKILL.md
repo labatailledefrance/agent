@@ -11,7 +11,7 @@ Depuis la racine de l'espace de travail :
 python3 .claude/skills/verifier-liens/verifier-liens.py
 ```
 
-Le script parcourt `documentation/`, `prototypes/` (sans les `target/`), `game/`, `.claude/` et le `README.md` de la racine. Il vérifie :
+Le script parcourt `documentation/`, `prototypes/` (sans les `target/`), `.claude/`, `.github/`, les dépôts `beta1-*` et le `README.md` de la racine. Il vérifie :
 
 - que chaque **fichier** visé existe ;
 - que chaque **ancre** (`#…`) correspond à un titre du fichier visé, selon la règle de GitHub ;

@@ -11,9 +11,11 @@ mkdir labatailledefrance && cd labatailledefrance
 git clone https://github.com/labatailledefrance/agent .claude
 git clone https://github.com/labatailledefrance/documentation
 git clone https://github.com/labatailledefrance/prototypes
+git clone https://github.com/labatailledefrance/.github
+for d in common server client datachain assets helm; do git clone https://github.com/labatailledefrance/beta1-$d; done
 ```
 
-Les commits sont signés (configuration globale `commit.gpgsign = true`, clé sur YubiKey).
+Les commits sont signés (configuration globale `commit.gpgsign = true`, clé sur YubiKey) avec `Signed-off-by` (`git commit -s -S`) et passent par une PR fusionnée en squash : `main` est protégée.
 
 Claude Code lit `.claude/CLAUDE.md` comme instructions du projet, et charge les skills de `.claude/skills/` et les agents de `.claude/agents/`.
 
