@@ -33,7 +33,7 @@
   - `beta1-assets/` : manifeste et scripts des assets tiers (à porter de P-24 et P-25) ;
   - `beta1-helm/` : chart `game`, installé sur srv (namespace `labatailledefrance`).
 - `data/` : données brutes (`sources/`) et générées (`generated/`), non versionnées.
-- `assets/` : modèles 3D, textures, sons.
+- `assets/` : modèles 3D, textures, sons ; hors dépôt, jamais versionné, à déplacer dans le manifeste de `beta1-assets`.
 
 La racine du projet n'est **pas** un dépôt git ; ne pas l'initialiser. Chaque sous-dossier versionné est un dépôt **public** de l'organisation, du même nom (`.claude/` est [`labatailledefrance/agent`](https://github.com/labatailledefrance/agent)). Le `README.md` de la racine et `BETA1.md` ne sont dans aucun dépôt.
 

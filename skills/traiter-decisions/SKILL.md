@@ -38,4 +38,4 @@ Fiche / - Question ?: Réponse
 Fiche / - Question ?:
 ```
 
-Ne pas pousser sur GitHub sans que l'utilisateur le demande.
+Ne pas ouvrir de PR sans que l'utilisateur le demande ; jamais de push direct sur `main` (branche, `git commit -s -S`, PR, squash).

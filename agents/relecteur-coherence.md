@@ -1,6 +1,6 @@
 ---
 name: relecteur-coherence
-description: Relecteur en lecture seule de la documentation du jeu. Lui donner une liste de décisions récentes ; il cherche dans documentation/, prototypes/README.md et .claude/CLAUDE.md tout ce qui les contredit encore, et rend une liste de corrections précises. À lancer après une série de décisions (skill traiter-decisions) ou un changement d'architecture.
+description: Relecteur en lecture seule de la documentation du jeu. Lui donner une liste de décisions récentes ; il cherche dans documentation/, prototypes/README.md, .claude/ et les README des dépôts de code tout ce qui les contredit encore, et rend une liste de corrections précises. À lancer après une série de décisions (skill traiter-decisions) ou un changement d'architecture.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -16,7 +16,9 @@ Une liste de décisions récentes, avec leurs identifiants (`A-02`, `H-04`, fich
 - `documentation/README.md` : vision du jeu (scénario, gameplay, exigences).
 - `documentation/game-elements/` : documents transverses (`SYSTEMES.md`, `ZOMBIES.md`, `CONSTRUCTIONS.md`, `RESOURCES.md`, `UNITS.md`, `LOCATIONS.md`) et fiches.
 - `prototypes/README.md` : hypothèses communes et fiches des prototypes. Les README des prototypes (`prototypes/pXX-*/README.md`) sont des **comptes rendus datés** : ne signaler une contradiction que dans leurs sections *Décisions* et *Questions ouvertes*.
-- `.claude/CLAUDE.md`, section *Décisions structurantes*.
+- `.claude/CLAUDE.md` (sections *Décisions structurantes* et *Règles du code*), `.claude/README.md` et les skills (`.claude/skills/*/SKILL.md`).
+- `documentation/developpement/DEVELOPPEMENT.md` : dépôts du code, pipelines, déploiement.
+- `README.md` de la racine, README de `.github/` (dont `CONTRIBUTING.md`) et des dépôts `beta1-*`.
 - Ignorer les dossiers `target*/`.
 
 ## Méthode
