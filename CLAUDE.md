@@ -23,16 +23,36 @@
   - `locations/LOCATIONS.md` : index des lieux d'intérêt (CTM, centrales, bases aériennes, gares, ports, mairies, poches de survivants), une fiche par type de lieu.
   - `assets/ASSETS.md` : liste des assets à trouver (modèles 3D, animations, sons, icônes), avec priorité et statut ; pas de génération par IA des modèles.
 - `prototypes/` : prototypes techniques jetables, un sous-dossier par prototype ; la liste (P-00 à P-26) est dans `prototypes/README.md` ; P-24 à P-26 restent en local, non versionnés : leurs enseignements vont dans `OPEN-PROBLEMS.md`. Pour en démarrer un : skill `nouveau-prototype`.
-- `game/` : code Rust du jeu, futur dépôt git (pas encore commencé ; démarrera sur l'architecture de P-24).
+- `documentation/developpement/DEVELOPPEMENT.md` : dépôts du code, standard, pipelines, déploiement.
+- Code de la beta 1, sur l'architecture de P-24 (un dépôt chacun) :
+  - `.github/` : CONTRIBUTING, SECURITY, modèles d'issues, **workflows réutilisables** (rust, securite, codeql, dco, image, chart), tagués (v2.0.0) et épinglés par SHA dans chaque dépôt ;
+  - `beta1-common/` : bibliothèque partagée (geo, codec, protocol et handshake sur FINGERPRINT calculé par `build.rs`, rng ; bientôt format des tiles), fuzzée ; les autres dépôts l'épinglent sur un même tag ;
+  - `beta1-server/` : serveur Bevy sans rendu à 20 Hz, WebSocket, `--determinism` vérifié en CI à 1 et 16 threads ;
+  - `beta1-client/` : client Bevy wasm32 / WebGPU ;
+  - `beta1-datachain/` : chaîne qui produit les tiles (à porter de P-07 et P-26) ;
+  - `beta1-assets/` : manifeste et scripts des assets tiers (à porter de P-24 et P-25) ;
+  - `beta1-helm/` : chart `game`, installé sur srv (namespace `labatailledefrance`).
 - `data/` : données brutes (`sources/`) et générées (`generated/`), non versionnées.
 - `assets/` : modèles 3D, textures, sons.
 
-La racine du projet n'est **pas** un dépôt git ; ne pas l'initialiser. Les sous-dossiers deviennent des dépôts au besoin : `documentation/` est [`labatailledefrance/documentation`](https://github.com/labatailledefrance/documentation), `prototypes/` est [`labatailledefrance/prototypes`](https://github.com/labatailledefrance/prototypes), `.claude/` est [`labatailledefrance/agent`](https://github.com/labatailledefrance/agent) (privés) ; `game/` le deviendra. Le `README.md` de la racine n'est dans aucun dépôt.
+La racine du projet n'est **pas** un dépôt git ; ne pas l'initialiser. Chaque sous-dossier versionné est un dépôt **public** de l'organisation, du même nom (`.claude/` est [`labatailledefrance/agent`](https://github.com/labatailledefrance/agent)). Le `README.md` de la racine et `BETA1.md` ne sont dans aucun dépôt.
 
 ## GitHub
 
 - Organisation **`labatailledefrance`** (via `gh`). Les dépôts y sont créés **au besoin**.
 - **Commits signés** avec la YubiKey de l'utilisateur (clé GPG `E9F8ED1DC0CD00CE`, configuration globale `commit.gpgsign = true`) : ne jamais désactiver la signature dans un dépôt. Chaque commit demande le PIN ou un contact sur la clé ; si la signature échoue, s'arrêter et prévenir l'utilisateur, sans commiter en clair.
+- **`main` protégée partout** (ruleset « main protégée ») : une branche par changement, `git commit -s -S` (Signed-off-by et signature), PR, CI verte, fusion en **squash** (`gh pr merge --squash`, GitHub signe le commit). **Jamais de push direct sur `main`**, documentation comprise.
+- Les workflows des contributeurs extérieurs attendent une approbation.
+
+## Règles du code (beta 1)
+
+Détail et justification : `documentation/developpement/DEVELOPPEMENT.md` et `.github/CONTRIBUTING.md`.
+
+- Code en français, **termes techniques en anglais** (handshake, encode, Reader, broadcast, `--listen`…).
+- Rust édition 2024, chaîne fixée par `rust-toolchain.toml` ; **pas d'`unsafe`** (`unsafe_code = "forbid"`) ; clippy `-D warnings` ; rustfmt (`max_width = 120`).
+- **Dépendances** : versions exactes (`=x.y.z`), publiées depuis au moins **deux semaines**, licence compatible AGPL (`cargo deny`). Images et charts tiers : **dhi.io** d'abord, toujours **par digest**. Actions GitHub épinglées par SHA.
+- **Déterminisme** : même hash d'état quel que soit le nombre de threads ; tout calcul en tâche de fond rend son résultat à un tick fixé.
+- **Déployer** : `cosign verify` (cosign ≥ 3 ; celui de la distribution ne lit pas les signatures) du chart et des digests d'images publiés par la CI, puis sur srv `KUBECONFIG=/etc/rancher/k3s/k3s.yaml helm upgrade game oci://ghcr.io/labatailledefrance/charts/game …` (commande complète dans le README de `beta1-helm`). Une mise à jour du serveur remet le monde à zéro (H-01). **Ne pas toucher** au namespace `zombie-p26` ni au port 7426 (partie de P-26).
 
 ## Conventions de documentation
 
@@ -67,10 +87,10 @@ Quand on propose des questions à l'utilisateur, les donner dans ce même format
 - **Logistique complète** : tout ce qui est consommé est produit, transporté et livré. Exception : les ressources que la France ne peut pas produire sont fournies par des pays non spécifiés, ajoutées aux stocks des ports d'outre-mer environ toutes les deux semaines (livraison non simulée), puis transportées par le joueur (G-03).
 - **Scénario** : métropole entièrement zombifiée (rares poches de survivants) ; environ 10 M d'humains en outre-mer ; les civils de métropole sont des **colons** débarqués par les ports reconquis (A-10, A-15). Aucune condition de victoire (G-07).
 - **Pas de politique** simulée ; l'arme nucléaire est utilisable.
-- Jeu **100 % open source**, code en **Rust portable**. Licence à choisir plus tard.
+- Jeu **100 % open source**, code en **Rust portable**, sous licence **AGPL-3.0-or-later**, contributions sous DCO (F-05).
 - Moteur **Bevy** : serveur sans rendu (simulation sur l'exécuteur multi-thread), client complet en WebAssembly. Données mises à jour ensemble groupées dans un même composant ; taille de lot minimale sur toute requête parallèle ; états fréquents en champs, marqueurs réservés aux changements rares (F-01, F-02).
 - **Tâches de fond à tick fixé** : tout calcul asynchrone (chemins, flow fields) rend son résultat à un tick fixé à son lancement, que le tick attend ; les tâches de fond ne cassent plus le déterminisme (A-12, P-24).
-- **Code du jeu** : `game/` démarre sur l'architecture de P-24 (bibliothèque commune carte + protocole, binaires serveur et client, protocole binaire écrit à la main, file d'envoi bornée par client). Zombies individuels jusqu'à ~1 km de la caméra, carte de densité au-delà ; objectif 60 ko/s par client (F-01, H-05, P-24).
+- **Code du jeu** : les dépôts `beta1-*` suivent l'architecture de P-24 (bibliothèque commune carte + protocole, binaires serveur et client, protocole binaire écrit à la main, file d'envoi bornée par client) ; on y porte P-26, module par module. Zombies individuels jusqu'à ~1 km de la caméra, carte de densité au-delà ; objectif 60 ko/s par client (F-01, H-05, P-24).
 - **Pas de sandbox de sécurité** pour les mods : ce n'est pas un objectif. Les mods ne tournent que côté serveur (F-03).
 - Références (F-02) : **serveur** `srv.labatailledefrance.fr` (EPYC 7351P, 16 cœurs / 32 threads, 128 Go, 2 × 8 To HDD en RAID 0, 1 Gbit/s, k3s + Traefik) pour le budget de simulation ; **client** et mesure des prototypes : Ryzen 7 5700X, 32 Go de DDR4, RTX 3060 12 Go.
 

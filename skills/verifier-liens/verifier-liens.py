@@ -20,8 +20,9 @@ RACINE = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else
                          os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 ORG = 'https://github.com/labatailledefrance/'
 # Dépôt GitHub -> dossier local
-DEPOTS = {'documentation': 'documentation', 'prototypes': 'prototypes',
-          'game': 'game', 'agent': '.claude'}
+DEPOTS = {'documentation': 'documentation', 'prototypes': 'prototypes', 'agent': '.claude', '.github': '.github',
+          **{d: d for d in ('beta1-common', 'beta1-server', 'beta1-client', 'beta1-datachain', 'beta1-assets',
+                            'beta1-helm')}}
 LIEN = re.compile(r'\[([^\]]*)\]\(([^)\s]+)\)')
 # target* : compilation ; modele : gabarits aux liens à compléter (<…>).
 EXCLUS = re.compile(r'/(target[^/]*|\.git|node_modules|modele)/')
@@ -56,8 +57,9 @@ def depot_de(chemin):
 
 fichiers = [f for f in glob.glob(os.path.join(RACINE, '**', '*.md'), recursive=True)
             if not EXCLUS.search(f) and '/data/' not in f]
-fichiers += [f for f in glob.glob(os.path.join(RACINE, '.claude', '**', '*.md'), recursive=True)
-             if f not in fichiers and not EXCLUS.search(f)]
+for cache in ('.claude', '.github'):   # dossiers cachés : ignorés par le premier glob
+    fichiers += [f for f in glob.glob(os.path.join(RACINE, cache, '**', '*.md'), recursive=True)
+                 if f not in fichiers and not EXCLUS.search(f)]
 
 problemes = []
 for f in sorted(fichiers):
