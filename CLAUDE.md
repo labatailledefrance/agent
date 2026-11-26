@@ -20,8 +20,9 @@
   - `zombies/ZOMBIES.md` : comportement des zombies.
   - `constructions/CONSTRUCTIONS.md` : constructions possibles.
   - `locations/LOCATIONS.md` : index des lieux d'intérêt (CTM, centrales, bases aériennes, gares, ports, mairies, poches de survivants), une fiche par type de lieu.
-- `prototypes/` : prototypes techniques jetables, un sous-dossier par prototype ; la liste (P-00 à P-23) est dans `prototypes/README.md`. Pour en démarrer un : skill `nouveau-prototype`.
-- `game/` : code Rust du jeu, futur dépôt git (pas encore commencé).
+  - `assets/ASSETS.md` : liste des assets à trouver (modèles 3D, animations, sons, icônes), avec priorité et statut ; pas de génération par IA des modèles.
+- `prototypes/` : prototypes techniques jetables, un sous-dossier par prototype ; la liste (P-00 à P-26) est dans `prototypes/README.md` ; P-24 à P-26 restent en local, non versionnés : leurs enseignements vont dans `OPEN-PROBLEMS.md`. Pour en démarrer un : skill `nouveau-prototype`.
+- `game/` : code Rust du jeu, futur dépôt git (pas encore commencé ; démarrera sur l'architecture de P-24).
 - `data/` : données brutes (`sources/`) et générées (`generated/`), non versionnées.
 - `assets/` : modèles 3D, textures, sons.
 
@@ -30,7 +31,7 @@ La racine du projet n'est **pas** un dépôt git ; ne pas l'initialiser. Les sou
 ## GitHub
 
 - Organisation **`labatailledefrance`** (via `gh`). Les dépôts y sont créés **au besoin**.
-- **Pas de signature de commit** : la configuration globale signe les commits (`commit.gpgsign = true`) ; chaque dépôt du projet la désactive localement (`git config commit.gpgsign false`).
+- **Commits signés** avec la YubiKey de l'utilisateur (clé GPG `E9F8ED1DC0CD00CE`, configuration globale `commit.gpgsign = true`) : ne jamais désactiver la signature dans un dépôt. Chaque commit demande le PIN ou un contact sur la clé ; si la signature échoue, s'arrêter et prévenir l'utilisateur, sans commiter en clair.
 
 ## Conventions de documentation
 
@@ -55,17 +56,20 @@ Quand on propose des questions à l'utilisateur, les donner dans ce même format
 - **Jeu en navigateur** : client Bevy en WebAssembly, **WebGPU seul** ; il affiche et envoie des ordres, il ne simule rien (F-01, F-04).
 - **Pas de compte** (pour le moment), anonymat total ; **tout le monde commande tout**, sans verrou, le dernier ordre l'emporte (« le joueur » = n'importe quel joueur) ; actions irréversibles (nucléaire, frappe sur un barrage, liste close) soumises au **vote des joueurs connectés** (majorité, une voix par adresse IP) (H-02 à H-04).
 - Objectif de **1 000 joueurs simultanés** sur 1 Gbit/s, sans CDN (H-05).
-- Données géographiques : **IGN** (BD TOPO, RGE ALTI) en priorité, OpenStreetMap en complément. Tiles **précalculées par le projet** (chaîne en Rust, un processus par département) installées sur le serveur, téléchargées par le client à la demande et gardées en cache (H-06) ; relief en nœuds de 2 m (B-01, P-07).
+- Données géographiques : **IGN** (BD TOPO, RGE ALTI) en priorité, OpenStreetMap en complément. Tiles **précalculées par le projet** (chaîne en Rust, un processus par département) installées sur le serveur, téléchargées par le client à la demande et gardées en cache (H-06) ; relief en nœuds de 2 m (B-01, P-07), de 1 m à partir de P-26, depuis le **LiDAR HD**, le RGE ALTI comblant les trous (révisable).
 - **Positions** : tile (zone de projection, ix, iy) + position locale f32 centrée ; ECEF f64 pour les navires en mer ; rendu relatif à la caméra, recalé au-delà de 5 km ; ticks en u64 (dates relatives compactes en u32 modulaire), shaders nourris de phases (C-01).
 - **Bâtiments générés au chargement** depuis la BD TOPO, jamais stockés ; porte calculée par la chaîne ; rendu en morceaux fusionnés de 250 m ; monuments fidèles sur liste écrite à la main (B-02, P-08).
 - **Recherche de chemin routière** : graphe national unique, CCH (ordre calculé par la chaîne, une métrique par classe d'itinéraire, personnalisation partielle après une coupure), replanification en tâche de fond ; sens uniques respectés sur les seules chaussées séparées ; un pont du jeu = une traversée (tabliers regroupés) (A-07, B-03, P-09).
 - **Simulation par tiles** d'environ 1 km : actives, inertes ou sûres. Pas d'**auto-résolution** des combats, sauf à l'intérieur d'un bâtiment (contenant, intérieur non simulé, B-02).
+- **Direction artistique low-poly**, dans l'esprit de Project Zomboid, textures peu détaillées ; assets existants, **pas de modèles générés par IA** ; **passe pixel art** plein écran légère (pixel de 1, palette à 60 %, contours) sur des maillages, sans Gaussian splats (E-01, P-24).
 - **Efficacité réaliste** de l'arsenal face aux zombies : c'est voulu.
 - **Logistique complète** : tout ce qui est consommé est produit, transporté et livré. Exception : les ressources que la France ne peut pas produire sont fournies par des pays non spécifiés, ajoutées aux stocks des ports d'outre-mer environ toutes les deux semaines (livraison non simulée), puis transportées par le joueur (G-03).
 - **Scénario** : métropole entièrement zombifiée (rares poches de survivants) ; environ 10 M d'humains en outre-mer ; les civils de métropole sont des **colons** débarqués par les ports reconquis (A-10, A-15). Aucune condition de victoire (G-07).
 - **Pas de politique** simulée ; l'arme nucléaire est utilisable.
 - Jeu **100 % open source**, code en **Rust portable**. Licence à choisir plus tard.
 - Moteur **Bevy** : serveur sans rendu (simulation sur l'exécuteur multi-thread), client complet en WebAssembly. Données mises à jour ensemble groupées dans un même composant ; taille de lot minimale sur toute requête parallèle ; états fréquents en champs, marqueurs réservés aux changements rares (F-01, F-02).
+- **Tâches de fond à tick fixé** : tout calcul asynchrone (chemins, flow fields) rend son résultat à un tick fixé à son lancement, que le tick attend ; les tâches de fond ne cassent plus le déterminisme (A-12, P-24).
+- **Code du jeu** : `game/` démarre sur l'architecture de P-24 (bibliothèque commune carte + protocole, binaires serveur et client, protocole binaire écrit à la main, file d'envoi bornée par client). Zombies individuels jusqu'à ~1 km de la caméra, carte de densité au-delà ; objectif 60 ko/s par client (F-01, H-05, P-24).
 - **Pas de sandbox de sécurité** pour les mods : ce n'est pas un objectif. Les mods ne tournent que côté serveur (F-03).
 - Références (F-02) : **serveur** `srv.labatailledefrance.fr` (EPYC 7351P, 16 cœurs / 32 threads, 128 Go, 2 × 8 To HDD en RAID 0, 1 Gbit/s, k3s + Traefik) pour le budget de simulation ; **client** et mesure des prototypes : Ryzen 7 5700X, 32 Go de DDR4, RTX 3060 12 Go.
 

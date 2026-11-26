@@ -7,12 +7,13 @@ Configuration de Claude Code pour La Bataille de France, jeu de reconquête de l
 Ce dépôt se clone dans le dossier `.claude/` à la racine de l'espace de travail, à côté des autres dépôts. La racine elle-même n'est pas un dépôt git.
 
 ```
-mkdir zombie && cd zombie
+mkdir labatailledefrance && cd labatailledefrance
 git clone https://github.com/labatailledefrance/agent .claude
 git clone https://github.com/labatailledefrance/documentation
 git clone https://github.com/labatailledefrance/prototypes
-for d in .claude documentation prototypes; do git -C $d config commit.gpgsign false; done
 ```
+
+Les commits sont signés (configuration globale `commit.gpgsign = true`, clé sur YubiKey).
 
 Claude Code lit `.claude/CLAUDE.md` comme instructions du projet, et charge les skills de `.claude/skills/` et les agents de `.claude/agents/`.
 
