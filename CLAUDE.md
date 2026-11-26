@@ -10,6 +10,7 @@
 ## Organisation
 
 - `README.md` : carte locale des dépôts (hors dépôt).
+- `BETA1.md` : liste locale (hors dépôt) du travail sur la beta 1 ; la tenir à jour (cocher, ajouter) à chaque étape.
 - `.claude/` : ce fichier, les skills et les agents de Claude Code (dépôt `labatailledefrance/agent`).
 - `documentation/README.md` : vision du jeu (scénario, gameplay, exigences).
 - `documentation/OPEN-PROBLEMS.md` : problèmes techniques et de conception, avec identifiants (A-01, G-03…) et statuts (Ouvert, Piste, Prototype, Décidé).
