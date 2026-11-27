@@ -56,7 +56,7 @@ Détail et justification : `documentation/developpement/DEVELOPPEMENT.md` et `.g
 
 ## Conventions de documentation
 
-- **Fiches d'unités** : même structure partout. Identité, Versions, Postes, Ordres possibles (unités [A]), Armement, Équipement, Besoins logistiques, Mobilité, Interactions, Face aux zombies, Décisions, Questions ouvertes.
+- **Fiches d'unités** : même structure partout. Identité, Versions, Postes, Ordres possibles (ordres propres à l'unité), Armement, Équipement, Besoins logistiques, Mobilité, Interactions, Face aux zombies, Décisions, Questions ouvertes.
 - **Pas de chiffres** pour les statistiques de jeu : niveaux qualitatifs (faible / moyen / élevé). Les chiffres viendront plus tard.
 - **Ressources** : dans les fiches, utiliser exactement les noms de `RESOURCES.md`.
 - **Exactitude** : les informations sur l'arsenal réel dont on n'est pas sûr sont marquées « à vérifier ».
@@ -75,7 +75,7 @@ Quand on propose des questions à l'utilisateur, les donner dans ce même format
 - **Temps réel**, sans accélération ; si le calcul ne suit plus, le temps ralentit sous ×1 pour tous (A-02).
 - **Multijoueur seulement** : une seule partie officielle, sur un serveur unique qui fait autorité (`srv.labatailledefrance.fr`, pile native Kubernetes : ingress Traefik, qui filtre les abus ; tiles et client servis par nginx) ; monde persistant ; remise à zéro décidée par l'administrateur, et **toute mise à jour du serveur remet le monde à zéro** (pas de migration) ; instantané toutes les 5 min (A-12, A-13, H-01, H-07).
 - **Jeu en navigateur** : client Bevy en WebAssembly, **WebGPU seul** ; il affiche et envoie des ordres, il ne simule rien (F-01, F-04).
-- **Pas de compte** (pour le moment), anonymat total ; **tout le monde commande tout**, sans verrou, le dernier ordre l'emporte (« le joueur » = n'importe quel joueur) ; actions irréversibles (nucléaire, frappe sur un barrage, liste close) soumises au **vote des joueurs connectés** (majorité, une voix par adresse IP) (H-02 à H-04).
+- **Pas de compte** (pour le moment), anonymat total ; **tout le monde commande tout**, sans verrou, le dernier ordre l'emporte (« le joueur » = n'importe quel joueur) ; **pas de pilotage manuel** : on commande une unité, même seule, par des ordres, jamais au clavier ; un seul ordre à la fois (un ordre de groupe remplace ceux des membres) ; l'unité choisit ses cibles, pas de micro-management, sauf missions de feu sur zone, destructions d'infrastructure et frappes votées, ordonnées par le joueur (D-02) ; actions irréversibles (nucléaire, frappe sur un barrage, liste close) soumises au **vote des joueurs connectés** (majorité, une voix par adresse IP) (H-02 à H-04).
 - Objectif de **1 000 joueurs simultanés** sur 1 Gbit/s, sans CDN (H-05).
 - Données géographiques : **IGN** (BD TOPO, RGE ALTI) en priorité, OpenStreetMap en complément. Tiles **précalculées par le projet** (chaîne en Rust, un processus par département) installées sur le serveur, téléchargées par le client à la demande et gardées en cache (H-06) ; relief en nœuds de 2 m (B-01, P-07), de 1 m à partir de P-26, depuis le **RGE ALTI 1 m** seul (5 m en secours) : **pas de LiDAR HD** (B-01).
 - **Positions** : tile (zone de projection, ix, iy) + position locale f32 centrée ; ECEF f64 pour les navires en mer ; rendu relatif à la caméra, recalé au-delà de 5 km ; ticks en u64 (dates relatives compactes en u32 modulaire), shaders nourris de phases (C-01).
