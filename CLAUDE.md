@@ -52,7 +52,7 @@ Détail et justification : `documentation/developpement/DEVELOPPEMENT.md` et `.g
 - Rust édition 2024, chaîne fixée par `rust-toolchain.toml` ; **pas d'`unsafe`** (`unsafe_code = "forbid"`) ; clippy `-D warnings` ; rustfmt (`max_width = 120`).
 - **Dépendances** : versions exactes (`=x.y.z`), publiées depuis au moins **deux semaines**, licence compatible AGPL (`cargo deny`). Images et charts tiers : **dhi.io** d'abord, toujours **par digest**. Actions GitHub épinglées par SHA.
 - **Déterminisme** : même hash d'état quel que soit le nombre de threads ; tout calcul en tâche de fond rend son résultat à un tick fixé.
-- **Déployer** : `cosign verify` (cosign ≥ 3 ; celui de la distribution ne lit pas les signatures) du chart et des digests d'images publiés par la CI, puis sur srv `KUBECONFIG=/etc/rancher/k3s/k3s.yaml helm upgrade game oci://ghcr.io/labatailledefrance/charts/game …` (commande complète dans le README de `beta1-helm`). Une mise à jour du serveur remet le monde à zéro (H-01). **Ne pas toucher** au namespace `zombie-p26` ni au port 7426 (partie de P-26).
+- **Déployer** : `cosign verify` (cosign ≥ 3 ; celui de la distribution ne lit pas les signatures) du chart et des digests d'images publiés par la CI, puis sur srv `KUBECONFIG=/etc/rancher/k3s/k3s.yaml helm upgrade game oci://ghcr.io/labatailledefrance/charts/game …` (commande complète dans le README de `beta1-helm`). Une mise à jour du serveur remet le monde à zéro (H-01). P-26 ne tourne plus sur srv (namespace supprimé le 2026-11-27) ; ses fichiers restent dans `/srv/zombie-p26`.
 
 ## Conventions de documentation
 
