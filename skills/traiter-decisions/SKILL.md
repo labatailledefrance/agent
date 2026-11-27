@@ -23,7 +23,7 @@ Fiche / - Question ?: Réponse
 ## Règles de rédaction
 
 - Français, phrases courtes, gras sur l'élément décisif.
-- **Pas de chiffres** pour les statistiques de jeu (niveaux qualitatifs). Les chiffres d'architecture et de mesure sont permis.
+- **Pas de chiffres** pour les statistiques de jeu (niveaux qualitatifs) : ils vivront dans le catalogue TOML de `beta1-server` (E-02). Les chiffres d'architecture et de mesure sont permis.
 - Noms de ressources exactement ceux de `RESOURCES.md`.
 - Ce qui est incertain sur l'arsenal réel ou une technologie : « à vérifier ».
 - Liens : relatifs dans un même dépôt ; URL `https://github.com/labatailledefrance/<dépôt>/blob/main/<chemin>` d'un dépôt à l'autre. Les ancres suivent les titres (`### H-04 — Vote sur …` → `#h-04--vote-sur-…`).
