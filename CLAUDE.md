@@ -26,8 +26,8 @@
 - `documentation/developpement/DEVELOPPEMENT.md` : dépôts du code, standard, pipelines, déploiement.
 - Code de la beta 1, sur l'architecture de P-24 (un dépôt chacun) :
   - `.github/` : CONTRIBUTING, SECURITY, modèles d'issues, **workflows réutilisables** (rust, securite, codeql, dco, image, chart), tagués (v2.0.0) et épinglés par SHA dans chaque dépôt ;
-  - `beta1-common/` : bibliothèque partagée (geo, codec, protocol et handshake sur FINGERPRINT calculé par `build.rs`, rng ; bientôt format des tiles), fuzzée ; les autres dépôts l'épinglent sur un même tag ;
-  - `beta1-server/` : serveur Bevy sans rendu à 20 Hz, WebSocket, `--determinism` vérifié en CI à 1 et 16 threads ;
+  - `beta1-common/` : bibliothèque partagée (geo, codec, protocol et handshake sur FINGERPRINT calculé par `build.rs`, rng, format des tiles et du graphe routier ; bientôt types du catalogue), fuzzée ; les autres dépôts l'épinglent sur un même tag ;
+  - `beta1-server/` : serveur Bevy sans rendu à 20 Hz, WebSocket, `--determinism` vérifié en CI à 1 et 16 threads ; plugins par domaine, contenu de base en mod `base` dans `mods/base/` (à poser, E-02, F-01, F-03) ;
   - `beta1-client/` : client Bevy wasm32 / WebGPU ;
   - `beta1-datachain/` : chaîne qui produit les tiles (à porter de P-07 et P-26) ;
   - `beta1-assets/` : manifeste et scripts des assets tiers (à porter de P-24 et P-25) ;
@@ -52,12 +52,13 @@ Détail et justification : `documentation/developpement/DEVELOPPEMENT.md` et `.g
 - Rust édition 2024, chaîne fixée par `rust-toolchain.toml` ; **pas d'`unsafe`** (`unsafe_code = "forbid"`) ; clippy `-D warnings` ; rustfmt (`max_width = 120`).
 - **Dépendances** : versions exactes (`=x.y.z`), publiées depuis au moins **deux semaines**, licence compatible AGPL (`cargo deny`). Images et charts tiers : **dhi.io** d'abord, toujours **par digest**. Actions GitHub épinglées par SHA.
 - **Déterminisme** : même hash d'état quel que soit le nombre de threads ; tout calcul en tâche de fond rend son résultat à un tick fixé.
+- **Organisation du serveur** : un plugin Bevy par domaine (n'écrit que ses composants, communique par messages), phases ordonnées dans `app.rs`, détection d'ambiguïté en erreur ; tout ce qui décrit le jeu est en TOML dans des mods (`mods/base/`), le comportement en Rust (E-02, F-01).
 - **Déployer** : `cosign verify` (cosign ≥ 3 ; celui de la distribution ne lit pas les signatures) du chart et des digests d'images publiés par la CI, puis sur srv `KUBECONFIG=/etc/rancher/k3s/k3s.yaml helm upgrade game oci://ghcr.io/labatailledefrance/charts/game …` (commande complète dans le README de `beta1-helm`). Une mise à jour du serveur remet le monde à zéro (H-01). P-26 ne tourne plus sur srv (namespace supprimé le 2026-11-27) ; ses fichiers restent dans `/srv/zombie-p26`.
 
 ## Conventions de documentation
 
 - **Fiches d'unités** : même structure partout. Identité, Versions, Postes, Ordres possibles (ordres propres à l'unité), Armement, Équipement, Besoins logistiques, Mobilité, Interactions, Face aux zombies, Décisions, Questions ouvertes.
-- **Pas de chiffres** pour les statistiques de jeu : niveaux qualitatifs (faible / moyen / élevé). Les chiffres viendront plus tard.
+- **Pas de chiffres** pour les statistiques de jeu : niveaux qualitatifs (faible / moyen / élevé). Les chiffres viendront plus tard, dans le catalogue TOML de `beta1-server` (E-02), jamais dans les fiches.
 - **Ressources** : dans les fiches, utiliser exactement les noms de `RESOURCES.md`.
 - **Exactitude** : les informations sur l'arsenal réel dont on n'est pas sûr sont marquées « à vérifier ».
 - **Liens** : relatifs, entre fichiers `.md` d'un **même dépôt**. D'un dépôt à l'autre, URL GitHub complète (`https://github.com/labatailledefrance/<dépôt>/blob/main/<chemin>`). Pas de lien vers `data/` (non versionné) ni vers `CLAUDE.md` : chemin en texte. Après une modification de structure, vérifier qu'aucun lien n'est cassé (skill `verifier-liens`).
@@ -92,7 +93,8 @@ Quand on propose des questions à l'utilisateur, les donner dans ce même format
 - Moteur **Bevy** : serveur sans rendu (simulation sur l'exécuteur multi-thread), client complet en WebAssembly. Données mises à jour ensemble groupées dans un même composant ; taille de lot minimale sur toute requête parallèle ; états fréquents en champs, marqueurs réservés aux changements rares (F-01, F-02).
 - **Tâches de fond à tick fixé** : tout calcul asynchrone (chemins, flow fields) rend son résultat à un tick fixé à son lancement, que le tick attend ; les tâches de fond ne cassent plus le déterminisme (A-12, P-24).
 - **Code du jeu** : les dépôts `beta1-*` suivent l'architecture de P-24 (bibliothèque commune carte + protocole, binaires serveur et client, protocole binaire écrit à la main, file d'envoi bornée par client) ; on y porte P-26, module par module. Zombies individuels jusqu'à ~1 km de la caméra, carte de densité au-delà ; objectif 60 ko/s par client (F-01, H-05, P-24).
-- **Pas de sandbox de sécurité** pour les mods : ce n'est pas un objectif. Les mods ne tournent que côté serveur (F-03).
+- **Données du jeu en TOML** : un fichier par objet, dans des mods (contenu de base = mod `base`, `beta1-server/mods/base/`, à la Factorio), validation stricte au démarrage (`--check` en CI), compilées en `Catalogue` indexé par entiers, hash dans le hash d'état, envoyé au client au handshake ; pas de rechargement à chaud ; textes en clés de traduction Fluent, français seul (E-02, E-05) ; un instantané d'un autre hash de catalogue n'est pas repris (A-13).
+- **Mods de données seulement** (`mod.toml`, ordre par dépendances, fournis par une PVC ; la partie officielle ne charge que `base`), pas de code de mod chargé à l'exécution ; un mod de comportement est un fork. **Pas de sandbox de sécurité** : ce n'est pas un objectif. Les mods ne tournent que côté serveur (F-03).
 - Références (F-02) : **serveur** `srv.labatailledefrance.fr` (EPYC 7351P, 16 cœurs / 32 threads, 128 Go, 2 × 8 To HDD en RAID 0, 1 Gbit/s, k3s + Traefik) pour le budget de simulation ; **client** et mesure des prototypes : Ryzen 7 5700X, 32 Go de DDR4, RTX 3060 12 Go.
 
 ## Utilisateur
