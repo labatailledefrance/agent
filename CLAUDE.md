@@ -20,7 +20,7 @@
   - `systemes/SYSTEMES.md` : règles de simulation transverses (monde, tiles, combat, logistique…).
   - `zombies/ZOMBIES.md` : comportement des zombies.
   - `constructions/CONSTRUCTIONS.md` : constructions possibles.
-  - `locations/LOCATIONS.md` : index des lieux d'intérêt (CTM, centrales, bases aériennes, gares, ports, mairies, poches de survivants), une fiche par type de lieu.
+  - `locations/LOCATIONS.md` : index des lieux d'intérêt (CTM, centrales, barrages, bases aériennes, gares, ports, mairies, poches de survivants, bases et dépôts militaires, raffineries, usines d'armement, hôpitaux, eau potable), une fiche par type de lieu ; chaque catégorie et chaque couche dynamique a son interrupteur sur la carte (C-02).
   - `assets/ASSETS.md` : liste des assets à trouver (modèles 3D, animations, sons, icônes), avec priorité et statut ; pas de génération par IA des modèles.
 - `prototypes/` : prototypes techniques jetables, un sous-dossier par prototype ; la liste (P-00 à P-26) est dans `prototypes/README.md` ; P-24 à P-26 restent en local, non versionnés : leurs enseignements vont dans `OPEN-PROBLEMS.md`. Pour en démarrer un : skill `nouveau-prototype`.
 - `documentation/developpement/DEVELOPPEMENT.md` : dépôts du code, standard, pipelines, déploiement.
