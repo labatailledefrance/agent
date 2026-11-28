@@ -32,6 +32,7 @@
   - `beta1-datachain/` : chaîne qui produit les tiles (à porter de P-07 et P-26) ;
   - `beta1-assets/` : manifeste et scripts des assets tiers (à porter de P-24 et P-25) ;
   - `beta1-helm/` : chart `game`, installé sur srv (namespace `labatailledefrance`).
+- `website/` : site vitrine (Vite, React, TypeScript ; police Pixelify Sans depuis Google Fonts), publié par la CI sur GitHub Pages au domaine racine `labatailledefrance.fr` ; `srv.labatailledefrance.fr` reste le jeu.
 - `data/` : données brutes (`sources/`) et générées (`generated/`), non versionnées.
 - `assets/` : modèles 3D, textures, sons ; hors dépôt, jamais versionné, à déplacer dans le manifeste de `beta1-assets`.
 
